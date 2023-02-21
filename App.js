@@ -21,16 +21,6 @@ app.use(errorController.get404);
 
 sequelize
   .sync()
-  .then((result) => {
-    return User.findByPk(1);
-  })
-  .then((user) => {
-    if (!user) {
-      
-      return User.create({ email: "test@test.com" , password: "virag" });
-    }
-    return user;
-  })
   .then((user) => {
     const port = 3080;
     app.listen(port, () => {
@@ -40,3 +30,15 @@ sequelize
   .catch((err) => {
     console.log(err);
   });
+
+
+  // .then((result) => {
+  //   return User.findByPk(1);
+  // })
+  // .then((user) => {
+  //   if (!user) {
+      
+  //     return User.create({ email: "test@test.com" , password: "virag" });
+  //   }
+  //   return user;
+  // })

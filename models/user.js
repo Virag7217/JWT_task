@@ -1,5 +1,8 @@
+const bcrypt = require('bcryptjs');
 const Sequelize = require('sequelize');
 const sequelize = require('../utility/database');
+const jwt = require('jsonwebtoken');
+const secretKey = 'virag';
 
 
 
