@@ -20,23 +20,21 @@ exports.getSignup = (req, res, next) => {
 exports.postSignup = (req, res, next) => {
   const saltRounds = 12;
   const { email, password } = req.body;
-  bcrypt.hash(password, saltRounds, (err, hash) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    return User.create({ email, password: hash })
-      .then((result) => {
+  bcrypt
+    .hash(password, saltRounds)
+    .then((hashedPwd) => {
+      return User.create({ email, password: hashedPwd }).then((result) => {
         res.redirect("/login");
-      })
-      .catch((err) => {
-        console.log(err);
       });
-  });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 exports.postLogin = (req, res, next) => {
   const { email, password } = req.body;
+  console.log(req);
   User.findOne({ where: { email } })
     .then((user) => {
       if (!user) {
@@ -45,13 +43,15 @@ exports.postLogin = (req, res, next) => {
       bcrypt
         .compare(password, user.password)
         .then((result) => {
-          const token = jwt.sign({ email: user.email }, secretKey, {
-            expiresIn: "1h",
-          });
+          const token = jwt.sign(
+            { id: user.id, email: user.email },
+            secretKey,
+            {
+              expiresIn: "1h",
+            }
+          );
           console.log(token);
-          return token;
-        }).then(user => {
-          res.redirect('/');
+          return res.json({ message: "Login Successful!", token });
         })
         .catch((err) => {
           console.error(err);
@@ -60,4 +60,22 @@ exports.postLogin = (req, res, next) => {
     .catch((err) => {
       console.error(err);
     });
+};
+
+exports.postVerify = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.send("Please add token to");
+  }
+  const token = authHeader.split(" ")[1];
+  jwt.verify(token, secretKey, (err, auth) => {
+    if (err) {
+      console.error(err);
+      return res.send("Error");
+    }
+    res.send({
+      result: "user valid",
+      auth,
+    });
+  });
 };

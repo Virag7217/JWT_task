@@ -1,6 +1,7 @@
 exports.getHome = (req, res, next) => {
-  res.render("home", {
-    pageTitle: "Home Page",
-    path: "/",
-  });
+  
+      res.render("home", {
+        pageTitle: "Home Page",
+        path: "/",
+      });
 };

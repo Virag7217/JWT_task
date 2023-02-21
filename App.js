@@ -2,8 +2,7 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const sequelize = require("./utility/database");
-const User = require('./models/user');
-
+const User = require("./models/user");
 
 const app = express();
 const authroutes = require("./routes/auth");
@@ -12,6 +11,7 @@ const errorController = require("./controllers/error");
 
 app.set("view engine", "ejs");
 app.set("views", "views");
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -21,7 +21,7 @@ app.use(errorController.get404);
 
 sequelize
   .sync()
-  .then((user) => {
+  .then(() => {
     const port = 3080;
     app.listen(port, () => {
       console.log(`server is running. Port = ${port} `);
@@ -30,15 +30,3 @@ sequelize
   .catch((err) => {
     console.log(err);
   });
-
-
-  // .then((result) => {
-  //   return User.findByPk(1);
-  // })
-  // .then((user) => {
-  //   if (!user) {
-      
-  //     return User.create({ email: "test@test.com" , password: "virag" });
-  //   }
-  //   return user;
-  // })
